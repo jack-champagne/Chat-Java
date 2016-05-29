@@ -17,6 +17,8 @@ class Chat extends JFrame implements Runnable, ActionListener {
     // private Scanner output;
     private PrintWriter input;
     private JButton send, quit;
+    private JTextField chatbox;
+    private boolean running;
 
     Chat(Socket s) {
 
@@ -29,6 +31,8 @@ class Chat extends JFrame implements Runnable, ActionListener {
         JPanel panelM = new JPanel();
 
         //COMPONENTS AND BEHAVIOURS
+        chatbox = new JTextField();
+
         send = new JButton("Send");
         quit = new JButton("Quit");
 
@@ -39,10 +43,12 @@ class Chat extends JFrame implements Runnable, ActionListener {
         panelM.add(send);
         panelM.add(quit);
 
-        //ADDING OF PANEL
+        //ADDING OF PANEL AND START OF THREAD
         this.add(panelM);
-
+        this.running = true;
+        new Thread(this).start();
         setVisible(true);
+
 
         try {
             // this.output = new Scanner(s.getInputStream());
@@ -53,7 +59,9 @@ class Chat extends JFrame implements Runnable, ActionListener {
     }
 
     public void run() {
+        while (running) {
 
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
