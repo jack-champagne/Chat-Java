@@ -7,19 +7,19 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * Created by jackchampagne on 4/15/16.
  * Uploaded to GitHub on 5/28/16
  */
-class Chat extends JFrame implements Runnable, ActionListener {
+class Chat extends JFrame implements ActionListener {
 
     Socket s;
+    private Connection con;
     // private Scanner output;
-    private PrintWriter input;
     private JButton send, quit;
     private JTextField chatbox;
-    private boolean running;
 
     Chat(Socket s) {
 
@@ -50,31 +50,37 @@ class Chat extends JFrame implements Runnable, ActionListener {
 
         //ADDING OF PANEL AND START OF THREAD
         this.add(panelM);
-        this.running = true;
-        new Thread(this).start();
         setVisible(true);
 
-
         try {
-            // this.output = new Scanner(s.getInputStream());
-            this.input = new PrintWriter(s.getOutputStream());
-        } catch (IOException e) {
+            Scanner in = new Scanner(s.getInputStream());
+            PrintWriter out = new PrintWriter(s.getOutputStream());
+
+            con = new Connection(in, out);
+
+        } catch (IOException iOE) {
+            iOE.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    public void run() {
-        while (running) {
+        try {
+            Scanner in = new Scanner(s.getInputStream());
+            PrintWriter out = new PrintWriter(s.getOutputStream());
 
+            con = new Connection(in, out);
+
+        } catch (IOException iOE) {
+            iOE.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == send) {
-
-            System.out.println("Message sent");
-            input.println("Message recieved");
-
+            con.start();
         }
         if (e.getSource() == quit) {
             System.out.println("Quitting this chat session.");
@@ -83,3 +89,24 @@ class Chat extends JFrame implements Runnable, ActionListener {
     }
 
 }
+
+
+class Connection extends Thread {
+
+    private Scanner in;
+    private PrintWriter out;
+
+    Connection(Scanner in, PrintWriter out) {
+        this.in = in;
+        this.out = out;
+    }
+
+    void sendMessage() {
+
+    }
+
+    public void run() {
+
+    }
+}
+
