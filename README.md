@@ -5,5 +5,3 @@ Author - Jack Champagne
 Contributors:
 Jack Champagne
 Matt K.
-
-All contributors will be written here.
