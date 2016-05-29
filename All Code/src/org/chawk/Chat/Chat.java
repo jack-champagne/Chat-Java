@@ -26,7 +26,7 @@ class Chat extends JFrame implements Runnable, ActionListener {
         this.s = s;
         setTitle("Chat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(840, 500);
+        setSize((int) (0.615 * Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int) (0.3663 * Toolkit.getDefaultToolkit().getScreenSize().getHeight());
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -34,7 +34,7 @@ class Chat extends JFrame implements Runnable, ActionListener {
         JPanel chatPanel = new JPanel(new FlowLayout());
 
         //COMPONENTS AND BEHAVIOURS
-        chatbox = new JTextField(40);
+        chatbox = new JTextField((int) (0.0476 * this.getWidth()));
 
         send = new JButton("Send");
         quit = new JButton("Quit");
