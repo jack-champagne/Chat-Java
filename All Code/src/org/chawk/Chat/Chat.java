@@ -1,6 +1,7 @@
 package org.chawk.Chat;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -25,13 +26,15 @@ class Chat extends JFrame implements Runnable, ActionListener {
         this.s = s;
         setTitle("Chat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(200, 200);
+        setSize(840, 500);
+        setResizable(false);
         setLocationRelativeTo(null);
 
-        JPanel panelM = new JPanel();
+        JPanel panelM = new JPanel(new BorderLayout());
+        JPanel chatPanel = new JPanel(new FlowLayout());
 
         //COMPONENTS AND BEHAVIOURS
-        chatbox = new JTextField();
+        chatbox = new JTextField(40);
 
         send = new JButton("Send");
         quit = new JButton("Quit");
@@ -40,8 +43,10 @@ class Chat extends JFrame implements Runnable, ActionListener {
         quit.addActionListener(this);
 
         //ADDING OF COMPONENTS
-        panelM.add(send);
-        panelM.add(quit);
+        panelM.add(quit, BorderLayout.NORTH);
+        panelM.add(chatPanel, BorderLayout.SOUTH);
+        chatPanel.add(chatbox);
+        chatPanel.add(send);
 
         //ADDING OF PANEL AND START OF THREAD
         this.add(panelM);
