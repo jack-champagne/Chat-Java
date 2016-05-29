@@ -90,7 +90,6 @@ class Chat extends JFrame implements ActionListener {
 
 }
 
-
 class Connection extends Thread {
 
     private Scanner in;
