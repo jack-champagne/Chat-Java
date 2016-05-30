@@ -30,8 +30,6 @@ class Host {
 
             Chat chat = new Chat(connector.accept());
 
-            new Thread(chat).start();
-
             String client;
             client = chat.s.getInetAddress().toString();
             String ip = client.replace('/', ' ');

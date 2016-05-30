@@ -20,6 +20,7 @@ class Chat extends JFrame implements ActionListener {
     // private Scanner output;
     private JButton send, quit;
     private JTextField chatbox;
+    private boolean isRunning;
 
     Chat(Socket s) {
 
@@ -50,25 +51,16 @@ class Chat extends JFrame implements ActionListener {
 
         //ADDING OF PANEL AND START OF THREAD
         this.add(panelM);
+        this.isRunning = true;
         setVisible(true);
 
-        try {
-            Scanner in = new Scanner(s.getInputStream());
-            PrintWriter out = new PrintWriter(s.getOutputStream());
-
-            con = new Connection(in, out);
-
-        } catch (IOException iOE) {
-            iOE.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         try {
             Scanner in = new Scanner(s.getInputStream());
             PrintWriter out = new PrintWriter(s.getOutputStream());
 
             con = new Connection(in, out);
+            con.run();
 
         } catch (IOException iOE) {
             iOE.printStackTrace();
@@ -80,32 +72,36 @@ class Chat extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == send) {
-            con.start();
+            con.sendMessage("Message sent to you");
         }
         if (e.getSource() == quit) {
             System.out.println("Quitting this chat session.");
+            System.exit(0);
 
         }
     }
 
-}
+    private class Connection extends Thread {
 
-class Connection extends Thread {
+        private Scanner in;
+        private PrintWriter out;
 
-    private Scanner in;
-    private PrintWriter out;
+        Connection(Scanner in, PrintWriter out) {
+            this.in = in;
+            this.out = out;
+        }
 
-    Connection(Scanner in, PrintWriter out) {
-        this.in = in;
-        this.out = out;
+        void sendMessage(String message) {
+            out.println(message);
+        }
+
+        public void run() {
+            while (isRunning) {
+                String message = in.nextLine();
+                System.out.println(message);
+            }
+        }
     }
 
-    void sendMessage() {
-
-    }
-
-    public void run() {
-
-    }
 }
 
