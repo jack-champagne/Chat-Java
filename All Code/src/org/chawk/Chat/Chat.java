@@ -95,10 +95,8 @@ class Chat extends JFrame implements ActionListener {
         }
 
         public void run() {
-            while (isRunning) {
-                isRunning = false;
+            while (in.hasNextLine()) {
                 String message = in.nextLine();
-                isRunning = true;
                 System.out.println(message);
             }
         }
