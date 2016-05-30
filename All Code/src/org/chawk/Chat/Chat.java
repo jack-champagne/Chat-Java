@@ -19,7 +19,6 @@ class Chat extends JFrame implements ActionListener {
     private Connection con;
     // private Scanner output;
     private JButton send, quit;
-    private JTextField chatbox;
     private boolean isRunning;
 
     Chat(Socket s) {
@@ -35,7 +34,7 @@ class Chat extends JFrame implements ActionListener {
         JPanel chatPanel = new JPanel(new FlowLayout());
 
         //COMPONENTS AND BEHAVIOURS
-        chatbox = new JTextField((int) (0.0476 * this.getWidth()));
+        JTextField chatbox = new JTextField((int) (0.0476 * this.getWidth()));
 
         send = new JButton("Send");
         quit = new JButton("Quit");
@@ -97,7 +96,9 @@ class Chat extends JFrame implements ActionListener {
 
         public void run() {
             while (isRunning) {
+                isRunning = false;
                 String message = in.nextLine();
+                isRunning = true;
                 System.out.println(message);
             }
         }
