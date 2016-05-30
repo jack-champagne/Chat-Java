@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -55,8 +54,8 @@ class Chat extends JFrame implements ActionListener {
 
 
         try {
-            Scanner in = new Scanner(s.getInputStream());
-            PrintWriter out = new PrintWriter(s.getOutputStream());
+            OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream());
+            InputStreamReader in = new InputStreamReader(s.getInputStream());
 
             con = new Connection(in, out);
             con.run();
@@ -82,22 +81,38 @@ class Chat extends JFrame implements ActionListener {
 
     private class Connection extends Thread {
 
-        private Scanner in;
-        private PrintWriter out;
+        private InputStreamReader in;
+        private OutputStreamWriter out;
 
-        Connection(Scanner in, PrintWriter out) {
+        Connection(InputStreamReader in, OutputStreamWriter out) throws IOException {
             this.in = in;
             this.out = out;
         }
 
         void sendMessage(String message) {
-            out.println(message);
+            try {
+                out.write(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         public void run() {
-            while (in.hasNextLine()) {
-                String message = in.nextLine();
-                System.out.println(message);
+
+            char[] inMessage = new char[40];
+            String message;
+
+            try {
+
+                while(in.ready()) {
+                    if (in.read(inMessage, 0, 40) == -1) {
+                        message = inMessage.toString();
+                        System.out.println(message);
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
