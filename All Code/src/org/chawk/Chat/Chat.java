@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * Created by jackchampagne on 4/15/16.
@@ -14,7 +13,6 @@ import java.util.Scanner;
  */
 class Chat extends JFrame implements ActionListener {
 
-    Socket s;
     private Connection con;
     // private Scanner output;
     private JButton send, quit;
@@ -22,7 +20,6 @@ class Chat extends JFrame implements ActionListener {
 
     Chat(Socket s) {
 
-        this.s = s;
         setTitle("Chat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize((int) (0.615 * Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int) (0.615 * Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
@@ -52,18 +49,10 @@ class Chat extends JFrame implements ActionListener {
         this.isRunning = true;
         setVisible(true);
 
-
         try {
-            OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream());
-            InputStreamReader in = new InputStreamReader(s.getInputStream());
-
-            con = new Connection(in, out);
-            con.run();
-
-        } catch (IOException iOE) {
-            iOE.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            con = new Connection(s);
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
 
     }
@@ -79,43 +68,23 @@ class Chat extends JFrame implements ActionListener {
         }
     }
 
-    private class Connection extends Thread {
+    private class Connection {
 
-        private InputStreamReader in;
-        private OutputStreamWriter out;
+        private BufferedReader in;
+        private PrintWriter out;
 
-        Connection(InputStreamReader in, OutputStreamWriter out) throws IOException {
-            this.in = in;
-            this.out = out;
+        Connection(Socket s) throws IOException {
+            this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            this.out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
         }
 
-        void sendMessage(String message) {
-            try {
-                out.write(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        void sendMessage(String s) {
+            out.write(s);
         }
 
-        public void run() {
-
-            char[] inMessage = new char[40];
-            String message;
-
-            try {
-
-                while(in.ready()) {
-                    if (in.read(inMessage, 0, 40) == -1) {
-                        message = inMessage.toString();
-                        System.out.println(message);
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }
+
+
 
