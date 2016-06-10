@@ -2,6 +2,7 @@ package org.chawk.Chat;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Created by jackchampagne on 4/15/16.
@@ -28,15 +29,14 @@ class Host {
             Create a chatroom with the established connection
              */
 
-            Chat chat = new Chat(connector.accept());
-
-            new Thread(chat).start();
+            Socket s = connector.accept();
 
             String client;
-            client = chat.s.getInetAddress().toString();
+            client = s.getInetAddress().toString();
             String ip = client.replace('/', ' ');
 
             System.out.println("Connected to " + ip);
+            new Chat(s);
         } catch (IOException e) {
             e.printStackTrace();
         }

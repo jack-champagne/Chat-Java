@@ -22,7 +22,6 @@ class Client {
 
         try {
 
-            System.out.println("Attempting to catch connection.");
             Socket s = new Socket(InetAddress.getByName(attemptIP), 10064);
 
             /*
@@ -37,7 +36,7 @@ class Client {
             /*
             Create a chatroom with the established connection
              */
-            new Thread(new Chat(s)).start();
+            new Chat(s);
 
         } catch (IOException e) {
             e.printStackTrace();
