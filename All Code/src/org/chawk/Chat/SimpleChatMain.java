@@ -6,6 +6,7 @@ import javax.swing.*;
  * Created by jackchampagne on 4/15/16.
  * Uploaded to GitHub on 5/28/16
  */
+
 public class SimpleChatMain {
 
     private SimpleChatMain() {

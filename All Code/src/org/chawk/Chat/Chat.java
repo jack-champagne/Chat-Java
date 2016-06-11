@@ -16,11 +16,10 @@ import java.net.Socket;
  */
 class Chat extends JFrame implements ActionListener {
 
-    JTextField chatbox;
+    private JTextField chatbox;
     private Connection con;
     // private Scanner output;
     private JButton send, quit;
-    private boolean isRunning;
 
     Chat(Socket s) {
 
@@ -50,7 +49,6 @@ class Chat extends JFrame implements ActionListener {
 
         //ADDING OF PANEL AND START CONNECTION THREAD
         this.add(panelM);
-        this.isRunning = true;
         setVisible(true);
 
         this.con = new Connection(s);
@@ -58,10 +56,11 @@ class Chat extends JFrame implements ActionListener {
         System.out.println("Connection code reached");
     }
 
+    /*
     public void playSound() {
 
     }
-
+*/
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == send) {
             con.sendMessage(getMessage());
@@ -72,7 +71,7 @@ class Chat extends JFrame implements ActionListener {
         }
     }
 
-    public String getMessage() {
+    private String getMessage() {
         String message = chatbox.getText();
         chatbox.setText("");
         return message;
