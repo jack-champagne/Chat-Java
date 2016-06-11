@@ -1,5 +1,3 @@
-package org.chawk.Chat;
-
 import javax.swing.*;
 
 /**
