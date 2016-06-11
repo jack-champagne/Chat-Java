@@ -16,6 +16,7 @@ import java.net.Socket;
  */
 class Chat extends JFrame implements ActionListener {
 
+    JTextField chatbox;
     private Connection con;
     // private Scanner output;
     private JButton send, quit;
@@ -33,7 +34,7 @@ class Chat extends JFrame implements ActionListener {
         JPanel chatPanel = new JPanel(new FlowLayout());
 
         //COMPONENTS AND BEHAVIOURS
-        JTextField chatbox = new JTextField((int) (0.0476 * this.getWidth()));
+        chatbox = new JTextField((int) (0.0476 * this.getWidth()));
 
         send = new JButton("Send");
         quit = new JButton("Quit");
@@ -47,7 +48,7 @@ class Chat extends JFrame implements ActionListener {
         chatPanel.add(chatbox);
         chatPanel.add(send);
 
-        //ADDING OF PANEL AND START OF THREAD
+        //ADDING OF PANEL AND START CONNECTION THREAD
         this.add(panelM);
         this.isRunning = true;
         setVisible(true);
@@ -57,28 +58,35 @@ class Chat extends JFrame implements ActionListener {
         System.out.println("Connection code reached");
     }
 
+    public void playSound() {
+
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == send) {
-            con.sendMessage("Message sent to you");
+            con.sendMessage(getMessage());
         }
         if (e.getSource() == quit) {
-            System.out.println("Quitting this chat session.");
+            System.out.println();
             System.exit(0);
-
         }
+    }
+
+    public String getMessage() {
+        String message = chatbox.getText();
+        chatbox.setText("");
+        return message;
     }
 
     private class Connection implements Runnable {
 
         private BufferedReader in;
         private PrintWriter out;
-        private BufferedReader stdIn;
 
         Connection(Socket s) {
             try {
                 out = new PrintWriter(s.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                stdIn = new BufferedReader(new InputStreamReader(System.in));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,7 +108,7 @@ class Chat extends JFrame implements ActionListener {
         void checkMessages() throws IOException {
             String input;
             while ((input = in.readLine()) != null) {
-                System.out.println("echo: " + input);
+                System.out.println("Them: " + input);
             }
         }
 
