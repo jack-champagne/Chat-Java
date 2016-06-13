@@ -15,9 +15,9 @@ import java.util.ArrayList;
  */
 class Chat extends JFrame implements ActionListener {
 
+    public Connection con;
     Graphics g;
     private JTextField chatbox;
-    private Connection con;
     // private Scanner output;
     private JButton send, quit;
     private ArrayList<String> messages = new ArrayList<String>();
@@ -101,6 +101,7 @@ class Chat extends JFrame implements ActionListener {
             System.exit(0);
         }
     }
+
 
     private String getMessage() {
         String message = chatbox.getText();
