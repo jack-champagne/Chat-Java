@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by jackchampagne on 4/15/16.
@@ -14,10 +15,13 @@ import java.net.Socket;
  */
 class Chat extends JFrame implements ActionListener {
 
+    Graphics g;
     private JTextField chatbox;
     private Connection con;
     // private Scanner output;
     private JButton send, quit;
+    private ArrayList<String> messages = new ArrayList<String>();
+    private JPanel messageArea;
 
     Chat(Socket s) {
 
@@ -32,6 +36,11 @@ class Chat extends JFrame implements ActionListener {
 
         //COMPONENTS AND BEHAVIOURS
         chatbox = new JTextField((int) (0.0476 * this.getWidth()));
+        messageArea = new JPanel();
+        //messageArea.setLayout(new GridLayout(10, 1));
+        messageArea.setBackground(Color.WHITE);
+        g = messageArea.getGraphics();
+
 
         send = new JButton("Send");
         quit = new JButton("Quit");
@@ -42,16 +51,39 @@ class Chat extends JFrame implements ActionListener {
         //ADDING OF COMPONENTS
         panelM.add(quit, BorderLayout.NORTH);
         panelM.add(chatPanel, BorderLayout.SOUTH);
+        panelM.add(messageArea, BorderLayout.CENTER);
         chatPanel.add(chatbox);
         chatPanel.add(send);
 
         //ADDING OF PANEL AND START CONNECTION THREAD
         this.add(panelM);
+
+        //pack();
         setVisible(true);
 
         this.con = new Connection(s);
         new Thread(con).start();
         System.out.println("Connection code reached");
+    }
+
+    void updateMessages(String s) {
+        messages.add(s);
+        displayMessages();
+    }
+
+    private void displayMessages() {
+        System.out.println("Displaying messages");
+        Graphics g = messageArea.getGraphics();
+        g.setColor(Color.white);
+        g.fillRect(0, 0, messageArea.getWidth(), messageArea.getHeight());
+        g.setColor(Color.BLACK);
+        int messageNumber = 0;
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            messageNumber++;
+            g.drawString(messages.get(i), 40, 360 - 20 * messageNumber);
+        }
+
+
     }
 
     /*
@@ -63,6 +95,7 @@ class Chat extends JFrame implements ActionListener {
         if (e.getSource() == send) {
             con.sendMessage(getMessage());
         }
+
         if (e.getSource() == quit) {
             System.out.println();
             System.exit(0);
@@ -92,6 +125,9 @@ class Chat extends JFrame implements ActionListener {
 
         void sendMessage(String s) {
             out.println(s);
+            if (!s.isEmpty()) {
+                updateMessages("You: " + s + "\n\n");
+            }
         }
 
         public void run() {
@@ -105,7 +141,9 @@ class Chat extends JFrame implements ActionListener {
         void checkMessages() throws IOException {
             String input;
             while ((input = in.readLine()) != null) {
-                System.out.println("Them: " + input);
+                if (!input.isEmpty()) {
+                    updateMessages("Them: " + input + "\n\n");
+                }
             }
         }
 
