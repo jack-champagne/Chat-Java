@@ -1,11 +1,13 @@
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -13,22 +15,24 @@ import java.util.ArrayList;
  * Created by jackchampagne on 4/15/16.
  * Uploaded to GitHub on 5/28/16
  */
-class Chat extends JFrame implements ActionListener {
+class Chat extends JFrame implements ActionListener, KeyListener {
 
     public Connection con;
     Graphics g;
+    InputStream bingFile;
+    AudioStream bingStream;
     private JTextField chatbox;
     // private Scanner output;
     private JButton send, quit;
     private ArrayList<String> messages = new ArrayList<String>();
     private JPanel messageArea;
 
-    Chat(Socket s) {
+    Chat(Socket s) throws IOException {
 
         setTitle("Chat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize((int) (0.615 * Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int) (0.615 * Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
-        setResizable(false);
+        setResizable(true);
         setLocationRelativeTo(null);
 
         JPanel panelM = new JPanel(new BorderLayout());
@@ -40,7 +44,6 @@ class Chat extends JFrame implements ActionListener {
         //messageArea.setLayout(new GridLayout(10, 1));
         messageArea.setBackground(Color.WHITE);
         g = messageArea.getGraphics();
-
 
         send = new JButton("Send");
         quit = new JButton("Quit");
@@ -64,6 +67,10 @@ class Chat extends JFrame implements ActionListener {
         this.con = new Connection(s);
         new Thread(con).start();
         System.out.println("Connection code reached");
+        chatbox.addKeyListener(this);
+
+        bingFile = new FileInputStream(new File("yuasdfasdfasdfasdj"));
+        bingStream = new AudioStream(bingFile);
     }
 
     void updateMessages(String s) {
@@ -80,20 +87,18 @@ class Chat extends JFrame implements ActionListener {
         int messageNumber = 0;
         for (int i = messages.size() - 1; i >= 0; i--) {
             messageNumber++;
-            g.drawString(messages.get(i), 40, 360 - 20 * messageNumber);
+            g.drawString(messages.get(i), 40, messageArea.getHeight() - 20 - (20 * messageNumber));
         }
-
-
     }
 
-    /*
     public void playSound() {
-
+        AudioPlayer.player.start(bingStream);
     }
-*/
+
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == send) {
-            con.sendMessage(getMessage());
+            con.sendMessage(con.getMessage());
         }
 
         if (e.getSource() == quit) {
@@ -102,14 +107,26 @@ class Chat extends JFrame implements ActionListener {
         }
     }
 
-
-    private String getMessage() {
-        String message = chatbox.getText();
-        chatbox.setText("");
-        return message;
+    /*
+    Key Listener
+     */
+    public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == '\n') {
+            con.sendMessage(con.getMessage());
+        }
     }
 
-    private class Connection implements Runnable {
+    public void keyPressed(KeyEvent e) {
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+    /*
+    Key Listener
+     */
+
+
+    class Connection implements Runnable {
 
         private BufferedReader in;
         private PrintWriter out;
@@ -124,9 +141,29 @@ class Chat extends JFrame implements ActionListener {
             System.out.println("Connection object created.");
         }
 
+        String getMessage() {
+            String message = chatbox.getText();
+            chatbox.setText("");
+            message = message.trim();
+
+            if (message.length() <= 1000) {
+                return message;
+            } else if (message.length() > 1000) {
+                messageLengthError();
+                return "";
+            } else {
+                return "";
+            }
+        }
+
+        void messageLengthError() {
+            JOptionPane.showMessageDialog(messageArea, "Messages longer than 1000 characters may not be sent.");
+        }
+
         void sendMessage(String s) {
             out.println(s);
             if (!s.isEmpty()) {
+                System.out.println("Message length: " + s.length() + " characters");
                 updateMessages("You: " + s + "\n\n");
             }
         }
@@ -143,7 +180,9 @@ class Chat extends JFrame implements ActionListener {
             String input;
             while ((input = in.readLine()) != null) {
                 if (!input.isEmpty()) {
+                    System.out.println("Message length: " + input.length() + " characters");
                     updateMessages("Them: " + input + "\n\n");
+                    playSound();
                 }
             }
         }
